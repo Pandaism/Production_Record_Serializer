@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.scene.control.Button?>
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pandaism.serializer.controller.inputs.DVRController">
+   <children>
+      <VBox spacing="5.0">
+         <children>
+            <VBox>
+               <Label text="CPU SN" />
+               <TextField fx:id="cpu_serial" prefHeight="31.0" prefWidth="260.0" />
+               <Label text="Monitor SN" />
+               <TextField fx:id="monitor" prefHeight="31.0" prefWidth="260.0" />
+               <Label text="IMEI" />
+               <TextField fx:id="imei" prefHeight="31.0" prefWidth="260.0" />
+               <Label text="SIM" />
+               <TextField fx:id="sim" prefHeight="31.0" prefWidth="260.0" />
+               <Label text="RFID" />
+               <TextField fx:id="rfid" prefHeight="31.0" prefWidth="260.0" />
+               <Label text="Relay" />
+               <TextField fx:id="relay" prefHeight="31.0" prefWidth="260.0" />
+            </VBox>
+            <Button onAction="#appendData" layoutX="149.0" layoutY="629.0" mnemonicParsing="false" text="Append" />
+         </children>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+      </VBox>
+   </children>
+</AnchorPane>

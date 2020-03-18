@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="731.0" prefWidth="1157.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pandaism.serializer.controller.ApplicationController">
+  <children>
+    <MenuBar VBox.vgrow="NEVER">
+      <menus>
+        <Menu mnemonicParsing="false" text="File">
+          <items>
+            <MenuItem mnemonicParsing="false" onAction="#create_new" text="New" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" onAction="#open_saveas" text="Export" />
+            <MenuItem mnemonicParsing="false" onAction="#open_saveas" text="Import" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" onAction="#quit" text="Quit" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Edit" fx:id="edit_menu" disable="true">
+          <items>
+            <MenuItem mnemonicParsing="false" onAction="#create_new" text="Add Column"/>
+            <MenuItem mnemonicParsing="false" onAction="#create_new" text="Remove Column"/>
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" onAction="#create_new" text="Clear datasheet"/>
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Help">
+          <items>
+            <MenuItem id="menuitem_tutorial" mnemonicParsing="false" text="Tutorial" />
+                  <MenuItem id="menuitem_sops" mnemonicParsing="false" text="All SOPs" />
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+      <TabPane fx:id="data_sheet_tab_pane" prefHeight="698.0" prefWidth="1157.0" tabClosingPolicy="ALL_TABS" />
+  </children>
+</VBox>
