@@ -19,5 +19,7 @@ public class APController extends InputPanes {
 
         cpu_serial.setText("");
         antenna_serial.setText("");
+
+        status_right.textProperty().set("Number of records: " + super.table.getItems().size());
     }
 }

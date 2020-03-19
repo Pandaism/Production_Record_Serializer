@@ -32,5 +32,7 @@ public class InterviewController extends InputPanes {
         software_rev.setText("");
         supplier_sn.setText("");
         sd_card.setText("");
+
+        status_right.textProperty().set("Number of records: " + super.table.getItems().size());
     }
 }

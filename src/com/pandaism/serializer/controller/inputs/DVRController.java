@@ -24,5 +24,7 @@ public class DVRController extends InputPanes{
         sim.setText("");
         rfid.setText("");
         relay.setText("");
+
+        status_right.textProperty().set("Number of records: " + super.table.getItems().size());
     }
 }

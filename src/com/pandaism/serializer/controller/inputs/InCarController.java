@@ -35,5 +35,7 @@ public class InCarController extends InputPanes {
         supplier_sn.setText("");
         sd_card.setText("");
         assigned_ip.setText("");
+
+        status_right.textProperty().set("Number of records: " + super.table.getItems().size());
     }
 }

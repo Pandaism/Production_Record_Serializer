@@ -19,5 +19,7 @@ public class BWXController extends InputPanes {
 
         cpu_serial.setText("");
         docking_station.setText("");
+
+        status_right.textProperty().set("Number of records: " + super.table.getItems().size());
     }
 }

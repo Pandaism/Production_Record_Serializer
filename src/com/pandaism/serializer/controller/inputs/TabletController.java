@@ -20,5 +20,7 @@ public class TabletController extends InputPanes {
         imei.setText("");
         sim.setText("");
         docking_station.setText("");
+
+        status_right.textProperty().set("Number of records: " + super.table.getItems().size());
     }
 }

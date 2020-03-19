@@ -12,11 +12,14 @@ import com.pandaism.serializer.controller.units.mvi.BWX;
 import com.pandaism.serializer.controller.units.mvi.InCar;
 import com.pandaism.serializer.controller.units.mvi.Interview;
 import com.pandaism.serializer.fxml.SystemTab;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import java.io.IOException;
 import java.util.Arrays;

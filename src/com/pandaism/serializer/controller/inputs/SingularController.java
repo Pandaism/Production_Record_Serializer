@@ -14,5 +14,7 @@ public class SingularController extends InputPanes{
         cpu_serial.requestFocus();
 
         cpu_serial.setText("");
+
+        status_right.textProperty().set("Number of records: " + super.table.getItems().size());
     }
 }
