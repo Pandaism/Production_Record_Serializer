@@ -1,10 +1,8 @@
 package com.pandaism.serializer.fxml;
 
-import com.pandaism.serializer.Main;
 import com.pandaism.serializer.controller.DataSheetController;
 import com.pandaism.serializer.controller.inputs.InputPanes;
-import javafx.event.Event;
-import javafx.event.EventHandler;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -35,7 +33,13 @@ public class SystemTab<T> extends Tab {
 
         ContextMenu contextMenu = new ContextMenu();
         MenuItem removeItem = new MenuItem("Remove Entry...");
-        contextMenu.getItems().add(removeItem);
+        removeItem.addEventHandler(ActionEvent.ACTION, event -> {
+            T selection = data_table.getSelectionModel().getSelectedItem();
+            if(selection != null) {
+                data_table.getItems().remove(selection);
+                inputPanes.getStatus_right().textProperty().set("Number of records: " + data_table.getItems().size());
+            }
+        });
 
         data_table.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             if(event.getButton() == MouseButton.SECONDARY) {
@@ -47,15 +51,7 @@ public class SystemTab<T> extends Tab {
             }
         });
 
-        removeItem.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-            if(event.getButton() == MouseButton.PRIMARY) {
-                T selection = data_table.getSelectionModel().getSelectedItem();
-                if(selection != null) {
-                    data_table.getItems().remove(selection);
-                    inputPanes.getStatus_right().textProperty().set("Number of records: " + data_table.getItems().size());
-                }
-            }
-        });
+        contextMenu.getItems().add(removeItem);
 
         data_table.getColumns().addAll(columns);
         dataSheetController.getData_table().setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
