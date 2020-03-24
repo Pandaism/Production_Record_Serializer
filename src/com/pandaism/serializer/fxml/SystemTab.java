@@ -25,6 +25,7 @@ public class SystemTab<T> extends Tab {
     private String customer;
     private String unit;
     private String saleOrder;
+    private TableView<T> data_table;
 
     public SystemTab(String customer, Object unit, String saleOrder, List<TableColumn<T, String>> columns, AnchorPane anchorPane, InputPanes inputPanes) throws IOException {
         super("SO#" + saleOrder + " " + customer);
@@ -37,7 +38,7 @@ public class SystemTab<T> extends Tab {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("./data_sheet.fxml"));
         Node dataSheet = loader.load();
         DataSheetController<T> dataSheetController = loader.getController();
-        TableView<T> data_table = dataSheetController.getData_table();
+        this.data_table = dataSheetController.getData_table();
 
         ContextMenu contextMenu = new ContextMenu();
         MenuItem removeItem = new MenuItem("Remove Entry...");
@@ -190,5 +191,9 @@ public class SystemTab<T> extends Tab {
 
     public String getSaleOrder() {
         return saleOrder;
+    }
+
+    public TableView<T> getData_table() {
+        return data_table;
     }
 }
