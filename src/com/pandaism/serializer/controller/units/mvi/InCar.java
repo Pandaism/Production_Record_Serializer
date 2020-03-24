@@ -4,12 +4,12 @@ import com.pandaism.serializer.controller.units.Singular;
 import javafx.beans.property.SimpleStringProperty;
 
 public class InCar extends Singular {
-    private SimpleStringProperty id;
-    private SimpleStringProperty door_rev;
-    private SimpleStringProperty software_rev;
-    private SimpleStringProperty supplier_sn;
-    private SimpleStringProperty sd_card;
-    private SimpleStringProperty assigned_ip;
+    public SimpleStringProperty id;
+    public SimpleStringProperty door_rev;
+    public SimpleStringProperty software_rev;
+    public SimpleStringProperty supplier_sn;
+    public SimpleStringProperty sd_card;
+    public SimpleStringProperty assigned_ip;
 
     public InCar(SimpleStringProperty cpu_serial, SimpleStringProperty id, SimpleStringProperty door_rev, SimpleStringProperty software_rev, SimpleStringProperty supplier_sn, SimpleStringProperty sd_card, SimpleStringProperty assigned_ip) {
         super(cpu_serial);

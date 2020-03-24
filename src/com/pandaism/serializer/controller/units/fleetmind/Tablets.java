@@ -4,9 +4,9 @@ import com.pandaism.serializer.controller.units.Singular;
 import javafx.beans.property.SimpleStringProperty;
 
 public class Tablets extends Singular {
-    private SimpleStringProperty imei;
-    private SimpleStringProperty sim;
-    private SimpleStringProperty docking_station;
+    public SimpleStringProperty imei;
+    public SimpleStringProperty sim;
+    public SimpleStringProperty docking_station;
 
     public Tablets(SimpleStringProperty cpu_serial, SimpleStringProperty imei, SimpleStringProperty sim, SimpleStringProperty docking_station) {
         super(cpu_serial);

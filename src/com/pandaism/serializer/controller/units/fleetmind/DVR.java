@@ -4,11 +4,11 @@ import com.pandaism.serializer.controller.units.Singular;
 import javafx.beans.property.SimpleStringProperty;
 
 public class DVR extends Singular {
-    private SimpleStringProperty monitor;
-    private SimpleStringProperty imei;
-    private SimpleStringProperty sim;
-    private SimpleStringProperty rfid;
-    private SimpleStringProperty relay;
+    public SimpleStringProperty monitor;
+    public SimpleStringProperty imei;
+    public SimpleStringProperty sim;
+    public SimpleStringProperty rfid;
+    public SimpleStringProperty relay;
 
     public DVR(SimpleStringProperty cpu_serial, SimpleStringProperty monitor, SimpleStringProperty imei, SimpleStringProperty sim, SimpleStringProperty rfid, SimpleStringProperty relay) {
         super(cpu_serial);

@@ -4,7 +4,7 @@ import com.pandaism.serializer.controller.units.Singular;
 import javafx.beans.property.SimpleStringProperty;
 
 public class BWX extends Singular {
-    private SimpleStringProperty docking_station;
+    public SimpleStringProperty docking_station;
 
     public BWX(SimpleStringProperty cpu_serial, SimpleStringProperty docking_station) {
         super(cpu_serial);

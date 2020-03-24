@@ -4,7 +4,7 @@ import com.pandaism.serializer.controller.units.Singular;
 import javafx.beans.property.SimpleStringProperty;
 
 public class AP extends Singular {
-    private SimpleStringProperty antenna_serial;
+    public SimpleStringProperty antenna_serial;
 
     public AP(SimpleStringProperty cpu_serial, SimpleStringProperty antenna_serial) {
         super(cpu_serial);
