@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public class CreateNewSystemController {
@@ -32,8 +33,6 @@ public class CreateNewSystemController {
     public TextField it_customer;
     public TextField spare_sales_order;
     public TextField spare_customer;
-
-    private SystemTab tab;
 
     private Object[] fleetmindSystems = {"DVR", "M1", "G1", "SSV9", new Separator(), "Fleetmind Cameras", new Separator(), "Fleetmind Custom"};
     private List<TableColumn<DVR, String>> dvrCols = Arrays.asList(
@@ -83,6 +82,8 @@ public class CreateNewSystemController {
     private TabPane dataSheetPane;
     private Menu edit_menu;
 
+    private HashMap<String, SystemTab> tab = new HashMap<>();
+
     public void initialize() {
         this.fleetmind_unit_dropdown.getItems().addAll(this.fleetmindSystems);
         this.mvi_unit_dropdown.getItems().addAll(this.mviSystems);
@@ -103,51 +104,64 @@ public class CreateNewSystemController {
 
     private Tab createDataTab(String salesOrder, String customer, Object unit) throws IOException {
         FXMLLoader loader;
+        SystemTab systemTab = null;
 
         switch (unit.toString()) {
             case "DVR":
                 List<TableColumn<DVR, String>> dvrColumns = this.dvrCols;
                 loader = new FXMLLoader(getClass().getResource("../fxml/fleetmind_dvr_template.fxml"));
 
-                return (this.tab = getTab(loader, salesOrder, customer,unit, dvrColumns));
+                systemTab = getTab(loader, salesOrder, customer,unit, dvrColumns);
+                break;
             case "M1": case "G1":
                 List<TableColumn<Tablets, String>> tableColumns = this.tabletCols;
                 loader = new FXMLLoader(getClass().getResource("../fxml/fleetmind_tablet_template.fxml"));
 
-                return (this.tab = getTab(loader, salesOrder, customer,unit, tableColumns));
+                systemTab = getTab(loader, salesOrder, customer,unit, tableColumns);
+                break;
             case "SSV9": case "Fleetmind Cameras": case "Fleetmind Custom": case "MVI Custom": case "IT Custom":
                 List<TableColumn<Singular, String>> singleColumns = this.serialCols;
                 loader = new FXMLLoader(getClass().getResource("../fxml/singluar_serial_template.fxml"));
 
-                return (this.tab = getTab(loader, salesOrder, customer,unit, singleColumns));
+                systemTab =  getTab(loader, salesOrder, customer,unit, singleColumns);
+                break;
             case "Flashback In-Car":
                 List<TableColumn<InCar, String>> incarColumns = this.incarCols;
                 loader = new FXMLLoader(getClass().getResource("../fxml/mvi_fbincar_template.fxml"));
 
-                return (this.tab = getTab(loader, salesOrder, customer,unit, incarColumns));
+                systemTab =  getTab(loader, salesOrder, customer,unit, incarColumns);
+                break;
             case "Flashback Interview Room":
                 List<TableColumn<Interview, String>> interviewColumns = this.interviewCols;
                 loader = new FXMLLoader(getClass().getResource("../fxml/mvi_fbintr_template.fxml"));
 
-                return (this.tab = getTab(loader, salesOrder, customer,unit, interviewColumns));
+                systemTab =  getTab(loader, salesOrder, customer,unit, interviewColumns);
+                break;
             case "BWX-100":
                 List<TableColumn<BWX, String>> bwxColumns = this.bwxCols;
                 loader = new FXMLLoader(getClass().getResource("../fxml/mvi_bwx_template.fxml"));
 
-                return (this.tab = getTab(loader, salesOrder, customer,unit, bwxColumns));
+                systemTab =  getTab(loader, salesOrder, customer,unit, bwxColumns);
+                break;
             case "Server":
                 List<TableColumn<Server, String>> serverColumns = this.serverCols;
                 loader = new FXMLLoader(getClass().getResource("../fxml/it_server_template.fxml"));
 
-                return (this.tab = getTab(loader, salesOrder, customer,unit, serverColumns));
+                systemTab =  getTab(loader, salesOrder, customer,unit, serverColumns);
+                break;
             case "AP-AC-OUT":
                 List<TableColumn<AP, String>> apColumns = this.apCols;
                 loader = new FXMLLoader(getClass().getResource("../fxml/it_ap_template.fxml"));
 
-                return (this.tab = getTab(loader, salesOrder, customer,unit, apColumns));
+                systemTab =  getTab(loader, salesOrder, customer,unit, apColumns);
+                break;
         }
 
-        return null;
+        if (systemTab != null) {
+            this.tab.put(systemTab.getSaleOrder(), systemTab);
+        }
+
+        return systemTab;
     }
 
     private <T extends Singular> SystemTab getTab(FXMLLoader loader, String salesOrder, String customer, Object unit, List<TableColumn<T, String>> columns) throws IOException {
@@ -199,7 +213,7 @@ public class CreateNewSystemController {
         this.edit_menu = edit_menu;
     }
 
-    public SystemTab getTab() {
+    public HashMap<String, SystemTab> getTab() {
         return tab;
     }
 }
