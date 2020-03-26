@@ -156,10 +156,11 @@ public class ApplicationController {
 
                 }
 
-                datasheet.setColumnWidth(2, 256);
-                datasheet.setColumnWidth(3, 256);
-                datasheet.setColumnWidth(4, 256);
-                datasheet.setColumnWidth(5, 256);
+                datasheet.setColumnWidth(2, 256 * 30);
+                datasheet.setColumnWidth(3, 256 * 30);
+                datasheet.setColumnWidth(4, 256 * 16);
+                datasheet.setColumnWidth(5, 256 * 40);
+                datasheet.setColumnWidth(6, 256 * 30);
                 break;
             case "M1": case "G1":
                 System.out.println("Tablets: " + tab.getUnit());
