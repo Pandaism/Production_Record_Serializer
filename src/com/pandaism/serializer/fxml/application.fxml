@@ -16,6 +16,7 @@
             <MenuItem mnemonicParsing="false" onAction="#create_new" text="New" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" onAction="#export" text="Export" />
+            <MenuItem mnemonicParsing="false" onAction="#export_all" text="Export All.." />
             <MenuItem mnemonicParsing="false" onAction="#open_saveas" text="Import" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" onAction="#quit" text="Quit" />

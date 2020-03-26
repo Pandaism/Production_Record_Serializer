@@ -102,7 +102,7 @@ public class CreateNewSystemController {
         return column;
     }
 
-    private Tab createDataTab(String salesOrder, String customer, Object unit) throws IOException {
+    private Tab createDataTab(String salesOrder, String company, Object unit) throws IOException {
         FXMLLoader loader;
         SystemTab systemTab = null;
 
@@ -111,49 +111,49 @@ public class CreateNewSystemController {
                 List<TableColumn<DVR, String>> dvrColumns = this.dvrCols;
                 loader = new FXMLLoader(getClass().getResource("../fxml/fleetmind_dvr_template.fxml"));
 
-                systemTab = getTab(loader, salesOrder, customer,unit, dvrColumns);
+                systemTab = getTab(loader, salesOrder, company,unit, dvrColumns);
                 break;
             case "M1": case "G1":
                 List<TableColumn<Tablets, String>> tableColumns = this.tabletCols;
                 loader = new FXMLLoader(getClass().getResource("../fxml/fleetmind_tablet_template.fxml"));
 
-                systemTab = getTab(loader, salesOrder, customer,unit, tableColumns);
+                systemTab = getTab(loader, salesOrder, company,unit, tableColumns);
                 break;
             case "SSV9": case "Fleetmind Cameras": case "Fleetmind Custom": case "MVI Custom": case "IT Custom":
                 List<TableColumn<Singular, String>> singleColumns = this.serialCols;
                 loader = new FXMLLoader(getClass().getResource("../fxml/singluar_serial_template.fxml"));
 
-                systemTab =  getTab(loader, salesOrder, customer,unit, singleColumns);
+                systemTab =  getTab(loader, salesOrder, company,unit, singleColumns);
                 break;
             case "Flashback In-Car":
                 List<TableColumn<InCar, String>> incarColumns = this.incarCols;
                 loader = new FXMLLoader(getClass().getResource("../fxml/mvi_fbincar_template.fxml"));
 
-                systemTab =  getTab(loader, salesOrder, customer,unit, incarColumns);
+                systemTab =  getTab(loader, salesOrder, company,unit, incarColumns);
                 break;
             case "Flashback Interview Room":
                 List<TableColumn<Interview, String>> interviewColumns = this.interviewCols;
                 loader = new FXMLLoader(getClass().getResource("../fxml/mvi_fbintr_template.fxml"));
 
-                systemTab =  getTab(loader, salesOrder, customer,unit, interviewColumns);
+                systemTab =  getTab(loader, salesOrder, company,unit, interviewColumns);
                 break;
             case "BWX-100":
                 List<TableColumn<BWX, String>> bwxColumns = this.bwxCols;
                 loader = new FXMLLoader(getClass().getResource("../fxml/mvi_bwx_template.fxml"));
 
-                systemTab =  getTab(loader, salesOrder, customer,unit, bwxColumns);
+                systemTab =  getTab(loader, salesOrder, company,unit, bwxColumns);
                 break;
             case "Server":
                 List<TableColumn<Server, String>> serverColumns = this.serverCols;
                 loader = new FXMLLoader(getClass().getResource("../fxml/it_server_template.fxml"));
 
-                systemTab =  getTab(loader, salesOrder, customer,unit, serverColumns);
+                systemTab =  getTab(loader, salesOrder, company,unit, serverColumns);
                 break;
             case "AP-AC-OUT":
                 List<TableColumn<AP, String>> apColumns = this.apCols;
                 loader = new FXMLLoader(getClass().getResource("../fxml/it_ap_template.fxml"));
 
-                systemTab =  getTab(loader, salesOrder, customer,unit, apColumns);
+                systemTab =  getTab(loader, salesOrder, company,unit, apColumns);
                 break;
         }
 
@@ -164,8 +164,8 @@ public class CreateNewSystemController {
         return systemTab;
     }
 
-    private <T extends Singular> SystemTab getTab(FXMLLoader loader, String salesOrder, String customer, Object unit, List<TableColumn<T, String>> columns) throws IOException {
-        SystemTab tab = new SystemTab<>(customer, unit, salesOrder, columns, loader.load(), loader.getController());
+    private <T extends Singular> SystemTab getTab(FXMLLoader loader, String salesOrder, String company, Object unit, List<TableColumn<T, String>> columns) throws IOException {
+        SystemTab tab = new SystemTab<>(company, unit, salesOrder, columns, loader.load(), loader.getController());
 
         if(this.edit_menu.isDisable()) {
             this.edit_menu.disableProperty().set(false);
@@ -193,8 +193,8 @@ public class CreateNewSystemController {
         }
     }
 
-    private Tab createDataTab(String salesOrder, String customer) throws IOException {
-        return createDataTab(salesOrder, customer, null);
+    private Tab createDataTab(String salesOrder, String company) throws IOException {
+        return createDataTab(salesOrder, company, null);
     }
 
     public void close() {

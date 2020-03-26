@@ -22,14 +22,14 @@ import java.io.IOException;
 import java.util.List;
 
 public class SystemTab<T> extends Tab {
-    private String customer;
+    private String title;
     private String unit;
     private String saleOrder;
     private TableView<T> data_table;
 
-    public SystemTab(String customer, Object unit, String saleOrder, List<TableColumn<T, String>> columns, AnchorPane anchorPane, InputPanes inputPanes) throws IOException {
-        super("SO#" + saleOrder + " " + customer);
-        this.customer = customer;
+    public SystemTab(String title, Object unit, String saleOrder, List<TableColumn<T, String>> columns, AnchorPane anchorPane, InputPanes inputPanes) throws IOException {
+        super("SO#" + saleOrder + " " + title);
+        this.title = title;
         this.unit = unit.toString();
         this.saleOrder = saleOrder;
 
@@ -181,8 +181,8 @@ public class SystemTab<T> extends Tab {
         this.setContent(dataSheet);
     }
 
-    public String getCustomer() {
-        return customer;
+    public String getTitle() {
+        return title;
     }
 
     public String getUnit() {
