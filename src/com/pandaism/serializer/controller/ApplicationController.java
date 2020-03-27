@@ -1,15 +1,10 @@
 package com.pandaism.serializer.controller;
 
-import com.pandaism.serializer.controller.units.Singular;
 import com.pandaism.serializer.controller.units.fleetmind.DVR;
-import com.pandaism.serializer.controller.units.fleetmind.Tablets;
-import com.pandaism.serializer.controller.units.it.AP;
-import com.pandaism.serializer.controller.units.it.Server;
-import com.pandaism.serializer.controller.units.mvi.BWX;
-import com.pandaism.serializer.controller.units.mvi.InCar;
-import com.pandaism.serializer.controller.units.mvi.Interview;
 import com.pandaism.serializer.fxml.SystemTab;
+import com.pandaism.serializer.thread.URLConnectionThread;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -21,11 +16,13 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import javax.imageio.ImageIO;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.List;
+import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ApplicationController {
     public TabPane data_sheet_tab_pane;
@@ -128,6 +125,7 @@ public class ApplicationController {
 
         switch (tab.getUnit()) {
             case "DVR":
+                ExecutorService service = Executors.newFixedThreadPool(8);
 
                 for(int item = 0; item < items.size(); item++) {
                     DVR dvr = (DVR) items.get(item);
@@ -139,21 +137,13 @@ public class ApplicationController {
                     serialRow.createCell(0).setCellValue(item + 1);
 
                     serialRow.createCell(2).setCellValue(dvr.getMonitor());
-                    getBarcode(barcodeRow, datasheet, dvr.getMonitor(), 2, 206, 50);
-
                     serialRow.createCell(3).setCellValue(dvr.getCpu_serial());
-                    getBarcode(barcodeRow, datasheet, dvr.getCpu_serial(), 3, 206, 50);
-
                     serialRow.createCell(4).setCellValue(dvr.getImei());
-
                     serialRow.createCell(5).setCellValue(dvr.getSim());
-                    getBarcode(barcodeRow, datasheet, dvr.getSim(), 5, 301, 50);
-
                     serialRow.createCell(6).setCellValue(dvr.getRfid());
-                    getBarcode(barcodeRow, datasheet, dvr.getSim(), 6, 167, 50);
-
                     serialRow.createCell(7).setCellValue(dvr.getRelay());
 
+                    Task<HashMap<String, byte[]>> task = new URLConnectionThread<>(dvr);
                 }
 
                 datasheet.setColumnWidth(2, 256 * 30);
@@ -161,6 +151,20 @@ public class ApplicationController {
                 datasheet.setColumnWidth(4, 256 * 16);
                 datasheet.setColumnWidth(5, 256 * 40);
                 datasheet.setColumnWidth(6, 256 * 30);
+
+//                int monitorIdx = datasheet.getWorkbook().addPicture(bytes, Workbook.PICTURE_TYPE_PNG);
+//                CreationHelper helper = datasheet.getWorkbook().getCreationHelper();
+//                Drawing drawing = datasheet.createDrawingPatriarch();
+//                ClientAnchor anchor = helper.createClientAnchor();
+//
+//                anchor.setCol1(c1);
+//                anchor.setRow1(barcodeRow.getRowNum());
+//                anchor.setCol2(c1 + 1);
+//                anchor.setRow2(barcodeRow.getRowNum() + 1);
+//
+//                drawing.createPicture(anchor, monitorIdx);
+//                barcodeRow.createCell(2);
+
                 break;
             case "M1": case "G1":
                 System.out.println("Tablets: " + tab.getUnit());
@@ -197,25 +201,5 @@ public class ApplicationController {
         } else {
             new Alert(Alert.AlertType.ERROR, "This file already exist...", ButtonType.OK).show();
         }
-    }
-
-    private void getBarcode(Row barcodeRow, Sheet datasheet, String input, int c1, int width, int height) throws IOException {
-        URLConnection connection = new URL("https://www.barcodesinc.com/generator/image.php?code=" + input + "&style=197&type=C128B&width=" + width + "&height=" + height + "&xres=1&font=3").openConnection();
-        connection.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
-
-        InputStream monitorStream = connection.getInputStream();
-        byte[] monitorBytes = IOUtils.toByteArray(monitorStream);
-        int monitorIdx = datasheet.getWorkbook().addPicture(monitorBytes, Workbook.PICTURE_TYPE_PNG);
-        CreationHelper helper = datasheet.getWorkbook().getCreationHelper();
-        Drawing drawing = datasheet.createDrawingPatriarch();
-        ClientAnchor anchor = helper.createClientAnchor();
-
-        anchor.setCol1(c1);
-        anchor.setRow1(barcodeRow.getRowNum());
-        anchor.setCol2(c1 + 1);
-        anchor.setRow2(barcodeRow.getRowNum() + 1);
-
-        drawing.createPicture(anchor, monitorIdx);
-        barcodeRow.createCell(2);
     }
 }

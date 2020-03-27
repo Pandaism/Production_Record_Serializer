@@ -10,6 +10,10 @@ public class DVR extends Singular {
     public SimpleStringProperty rfid;
     public SimpleStringProperty relay;
 
+    public byte[] monitorBytes;
+    public byte[] simBytes;
+    public byte[] rfidBytes;
+
     public DVR(SimpleStringProperty cpu_serial, SimpleStringProperty monitor, SimpleStringProperty imei, SimpleStringProperty sim, SimpleStringProperty rfid, SimpleStringProperty relay) {
         super(cpu_serial);
         this.monitor = monitor;
@@ -19,6 +23,29 @@ public class DVR extends Singular {
         this.relay = relay;
     }
 
+    public byte[] getMonitorBytes() {
+        return monitorBytes;
+    }
+
+    public void setMonitorBytes(byte[] monitorBytes) {
+        this.monitorBytes = monitorBytes;
+    }
+
+    public byte[] getSimBytes() {
+        return simBytes;
+    }
+
+    public void setSimBytes(byte[] simBytes) {
+        this.simBytes = simBytes;
+    }
+
+    public byte[] getRfidBytes() {
+        return rfidBytes;
+    }
+
+    public void setRfidBytes(byte[] rfidBytes) {
+        this.rfidBytes = rfidBytes;
+    }
 
     public String getMonitor() {
         return monitor.get();
