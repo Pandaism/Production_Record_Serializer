@@ -10,7 +10,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
 
-public class URLConnectionThread<T> extends Task<HashMap<String, byte[]>> {
+public class URLConnectionThread<T> extends Task<Void> {
     private T unit;
 
     public URLConnectionThread(T unit) {
@@ -18,17 +18,18 @@ public class URLConnectionThread<T> extends Task<HashMap<String, byte[]>> {
     }
 
     @Override
-    public HashMap<String, byte[]> call() throws Exception {
-        HashMap<String, byte[]> map = new HashMap<>();
-
-        if(unit instanceof DVR) {
-            map.put("Monitor", openConnection(((DVR)this.unit).getMonitor(), 206));
-            map.put("CPU", openConnection(((DVR)this.unit).getCpu_serial(), 206));
-            map.put("SIM", openConnection(((DVR)this.unit).getSim(), 206));
-            map.put("RFID", openConnection(((DVR)this.unit).getRfid(), 206));
+    public Void call() throws Exception {
+        if(this.unit instanceof DVR) {
+            DVR unit = (DVR) this.unit;
+            unit.setMonitorBytes(openConnection(unit.getMonitor(), 219));
+            unit.setCpuBytes(openConnection(unit.getCpu_serial(), 206));
+            unit.setSimBytes(openConnection(unit.getSim(), 310));
+            if(!unit.getRfid().isEmpty()) {
+                unit.setRfidBytes(openConnection(unit.getRfid(), 167));
+            }
         }
 
-        return map;
+        return null;
     }
 
     private byte[] openConnection(String input, int width) throws IOException {
