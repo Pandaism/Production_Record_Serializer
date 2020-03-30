@@ -2,7 +2,6 @@ package com.pandaism.serializer.controller;
 
 import com.pandaism.serializer.controller.units.fleetmind.DVR;
 import com.pandaism.serializer.fxml.SystemTab;
-import com.pandaism.serializer.thread.URLConnectionThread;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -124,86 +123,79 @@ public class ApplicationController {
 
      */
     private void data(SystemTab tab, Sheet datasheet, File xlsxFile) throws IOException {
-        synchronized (datasheet.getWorkbook()) {
-            TableView data_table = tab.getData_table();
-            ObservableList items = data_table.getItems();
+        TableView data_table = tab.getData_table();
+        ObservableList items = data_table.getItems();
 
-            switch (tab.getUnit()) {
-                case "DVR":
-                    ExecutorService service = Executors.newFixedThreadPool(8);
+        switch (tab.getUnit()) {
+            case "DVR":
+                for (int item = 0; item < items.size(); item++) {
+                    DVR dvr = (DVR) items.get(item);
 
-                    for(int item = 0; item < items.size(); item++) {
-                        DVR dvr = (DVR) items.get(item);
+                    Row serialRow = datasheet.createRow(1 + (item * 2));
+                    Row barcodeRow = datasheet.createRow(serialRow.getRowNum() + 1);
+                    barcodeRow.setHeight((short) 600);
+                    serialRow.createCell(0).setCellValue(item + 1);
 
-                        Row serialRow  = datasheet.createRow(1 + (item * 2));
-                        serialRow.createCell(0).setCellValue(item + 1);
+                    serialRow.createCell(2).setCellValue(dvr.getMonitor());
+                    getBarcode(datasheet, dvr.getMonitorBytes(), 2, barcodeRow);
+                    serialRow.createCell(3).setCellValue(dvr.getCpu_serial());
+                    getBarcode(datasheet, dvr.getCpuBytes(), 3, barcodeRow);
+                    serialRow.createCell(4).setCellValue(dvr.getImei());
+                    serialRow.createCell(5).setCellValue(dvr.getSim());
+                    getBarcode(datasheet, dvr.getSimBytes(), 5, barcodeRow);
+                    serialRow.createCell(6).setCellValue(dvr.getRfid());
+                    getBarcode(datasheet, dvr.getRfidBytes(), 6, barcodeRow);
+                    serialRow.createCell(7).setCellValue(dvr.getRelay());
 
-                        serialRow.createCell(2).setCellValue(dvr.getMonitor());
-                        serialRow.createCell(3).setCellValue(dvr.getCpu_serial());
-                        serialRow.createCell(4).setCellValue(dvr.getImei());
-                        serialRow.createCell(5).setCellValue(dvr.getSim());
-                        serialRow.createCell(6).setCellValue(dvr.getRfid());
-                        serialRow.createCell(7).setCellValue(dvr.getRelay());
-
-                        Task<Void> task = new URLConnectionThread<>(dvr);
-                        service.execute(task);
-
-                    }
-
-                    datasheet.setColumnWidth(2, 256 * 30);
-                    datasheet.setColumnWidth(3, 256 * 30);
-                    datasheet.setColumnWidth(4, 256 * 16);
-                    datasheet.setColumnWidth(5, 256 * 40);
-                    datasheet.setColumnWidth(6, 256 * 30);
-
-                    for(int item = 0; item < items.size(); item++) {
-                        DVR dvr = (DVR) items.get(item);
-
-                        Row barcodeRow  = datasheet.createRow(2 + (item * 2));
-                        barcodeRow.setHeight((short) 600);
-
-                        getBarcode(datasheet, dvr.getMonitorBytes(), 2, barcodeRow);
-
-                    }
-
-                    service.shutdown();
-                    break;
-                case "M1": case "G1":
-                    System.out.println("Tablets: " + tab.getUnit());
-                    break;
-                case "SSV9": case "Fleetmind Cameras": case "Fleetmind Custom": case "MVI Custom": case "IT Custom":
-                    System.out.println("Singular" + tab.getUnit());
-                    break;
-                case "Flashback In-Car":
-                    System.out.println("Flashback In-Car");
-                    break;
-                case "Flashback Interview Room":
-                    System.out.println("Flashback Interview Room");
-                    break;
-                case "BWX-100":
-                    System.out.println("BWX-100");
-                    break;
-                case "Server":
-                    System.out.println("Server");
-                    break;
-                case "AP-AC-OUT":
-                    System.out.println("AP-AC-OUT");
-                    break;
-            }
-
-            if(!xlsxFile.exists()) {
-                if(xlsxFile.createNewFile()) {
-                    FileOutputStream outputStream = new FileOutputStream(xlsxFile);
-                    datasheet.getWorkbook().write(outputStream);
-                    outputStream.close();
-                    datasheet.getWorkbook().close();
-
-                    new Alert(Alert.AlertType.INFORMATION, xlsxFile.getPath() + " created...", ButtonType.OK).show();
                 }
-            } else {
-                new Alert(Alert.AlertType.ERROR, "This file already exist...", ButtonType.OK).show();
-            }
+
+                datasheet.setColumnWidth(2, 256 * 30);
+                datasheet.setColumnWidth(3, 256 * 30);
+                datasheet.setColumnWidth(4, 256 * 16);
+                datasheet.setColumnWidth(5, 256 * 40);
+                datasheet.setColumnWidth(6, 256 * 30);
+                break;
+            case "M1":
+            case "G1":
+                System.out.println("Tablets: " + tab.getUnit());
+                break;
+            case "SSV9":
+            case "Fleetmind Cameras":
+            case "Fleetmind Custom":
+            case "MVI Custom":
+            case "IT Custom":
+                System.out.println("Singular" + tab.getUnit());
+                break;
+            case "Flashback In-Car":
+                System.out.println("Flashback In-Car");
+                break;
+            case "Flashback Interview Room":
+                System.out.println("Flashback Interview Room");
+                break;
+            case "BWX-100":
+                System.out.println("BWX-100");
+                break;
+            case "Server":
+                System.out.println("Server");
+                break;
+            case "AP-AC-OUT":
+                System.out.println("AP-AC-OUT");
+                break;
         }
+
+        if (!xlsxFile.exists()) {
+            if (xlsxFile.createNewFile()) {
+                FileOutputStream outputStream = new FileOutputStream(xlsxFile);
+                datasheet.getWorkbook().write(outputStream);
+                outputStream.close();
+                datasheet.getWorkbook().close();
+
+                new Alert(Alert.AlertType.INFORMATION, xlsxFile.getPath() + " created...", ButtonType.OK).show();
+            }
+        } else {
+            new Alert(Alert.AlertType.ERROR, "This file already exist...", ButtonType.OK).show();
+        }
+
     }
 
     private void getBarcode(Sheet datasheet, byte[] bytes, int c1, Row barcodeRow) {
@@ -217,7 +209,7 @@ public class ApplicationController {
         anchor.setCol2(c1 + 1);
         anchor.setRow2(barcodeRow.getRowNum() + 1);
 
-        drawing.createPicture(anchor, monitorIdx);
+        Picture picture = drawing.createPicture(anchor, monitorIdx);
         barcodeRow.createCell(2);
     }
 }

@@ -1,6 +1,7 @@
 package com.pandaism.serializer.controller.units.fleetmind;
 
 import com.pandaism.serializer.controller.units.Singular;
+import com.pandaism.serializer.thread.URLConnectionThread;
 import javafx.beans.property.SimpleStringProperty;
 
 public class DVR extends Singular {
@@ -21,30 +22,34 @@ public class DVR extends Singular {
         this.sim = sim;
         this.rfid = rfid;
         this.relay = relay;
-    }
 
-    public byte[] getMonitorBytes() {
-        return monitorBytes;
+        super.service.execute(new URLConnectionThread<>(this));
+
+        super.service.shutdown();
     }
 
     public void setMonitorBytes(byte[] monitorBytes) {
         this.monitorBytes = monitorBytes;
     }
 
-    public byte[] getSimBytes() {
-        return simBytes;
-    }
-
     public void setSimBytes(byte[] simBytes) {
         this.simBytes = simBytes;
     }
 
-    public byte[] getRfidBytes() {
-        return rfidBytes;
-    }
-
     public void setRfidBytes(byte[] rfidBytes) {
         this.rfidBytes = rfidBytes;
+    }
+
+    public byte[] getMonitorBytes() {
+        return monitorBytes;
+    }
+
+    public byte[] getSimBytes() {
+        return simBytes;
+    }
+
+    public byte[] getRfidBytes() {
+        return rfidBytes;
     }
 
     public String getMonitor() {

@@ -6,7 +6,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+
 public class Main extends Application {
+    public static ArrayList<ExecutorService> EXECUTORS = new ArrayList<>();
 
     @Override
     public void start(Stage primaryStage) throws Exception{
