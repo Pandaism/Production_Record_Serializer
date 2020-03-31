@@ -1,7 +1,10 @@
 package com.pandaism.serializer.controller;
 
 import com.pandaism.serializer.Main;
+import com.pandaism.serializer.controller.units.Singular;
 import com.pandaism.serializer.controller.units.fleetmind.DVR;
+import com.pandaism.serializer.controller.units.fleetmind.Tablets;
+import com.pandaism.serializer.controller.units.mvi.InCar;
 import com.pandaism.serializer.fxml.SystemTab;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -183,17 +186,65 @@ public class ApplicationController {
                 break;
             case "M1":
             case "G1":
-                System.out.println("Tablets: " + tab.getUnit());
+                for (int item = 0; item < items.size(); item++) {
+                    Tablets tablets = (Tablets) items.get(item);
+
+                    Row serialRow = datasheet.createRow(1 + (item * 2));
+                    Row barcodeRow = datasheet.createRow(serialRow.getRowNum() + 1);
+                    barcodeRow.setHeight((short) 600);
+                    serialRow.createCell(0).setCellValue(item + 1);
+
+                    serialRow.createCell(2).setCellValue(tablets.getCpu_serial());
+                    getBarcode(datasheet, tablets.getCpuBytes(), 2, barcodeRow);
+                    serialRow.createCell(3).setCellValue(tablets.getImei());
+                    serialRow.createCell(4).setCellValue(tablets.getSim());
+                    getBarcode(datasheet, tablets.getSimBytes(), 4, barcodeRow);
+                    serialRow.createCell(5).setCellValue(tablets.getDocking_station());
+                    getBarcode(datasheet, tablets.getDocking_stationBytes(), 5, barcodeRow);
+
+                }
+
+                datasheet.setColumnWidth(2, 256 * 30);
+                datasheet.setColumnWidth(3, 256 * 16);
+                datasheet.setColumnWidth(4, 256 * 40);
+                datasheet.setColumnWidth(5, 256 * 30);
                 break;
             case "SSV9":
             case "Fleetmind Cameras":
             case "Fleetmind Custom":
             case "MVI Custom":
             case "IT Custom":
-                System.out.println("Singular" + tab.getUnit());
+                for (int item = 0; item < items.size(); item++) {
+                    Singular tablets = (Singular) items.get(item);
+
+                    Row serialRow = datasheet.createRow(1 + (item * 2));
+                    Row barcodeRow = datasheet.createRow(serialRow.getRowNum() + 1);
+                    barcodeRow.setHeight((short) 600);
+                    serialRow.createCell(0).setCellValue(item + 1);
+
+                    serialRow.createCell(2).setCellValue(tablets.getCpu_serial());
+                    getBarcode(datasheet, tablets.getCpuBytes(), 2, barcodeRow);
+
+                }
+
+                datasheet.setColumnWidth(2, 256 * 30);
                 break;
             case "Flashback In-Car":
-                System.out.println("Flashback In-Car");
+                for (int item = 0; item < items.size(); item++) {
+                    InCar inCar = (InCar) items.get(item);
+
+                    Row serialRow = datasheet.createRow(1 + (item * 2));
+                    Row barcodeRow = datasheet.createRow(serialRow.getRowNum() + 1);
+                    barcodeRow.setHeight((short) 600);
+                    serialRow.createCell(0).setCellValue(item + 1);
+
+                    serialRow.createCell(2).setCellValue(inCar.getCpu_serial());
+                    getBarcode(datasheet, inCar.getCpuBytes(), 2, barcodeRow);
+                    serialRow.createCell(3).setCellValue(inCar.getDoor_rev());
+
+                }
+
+                datasheet.setColumnWidth(2, 256 * 30);
                 break;
             case "Flashback Interview Room":
                 System.out.println("Flashback Interview Room");

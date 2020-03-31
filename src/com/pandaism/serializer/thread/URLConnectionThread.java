@@ -1,6 +1,8 @@
 package com.pandaism.serializer.thread;
 
+import com.pandaism.serializer.controller.units.Singular;
 import com.pandaism.serializer.controller.units.fleetmind.DVR;
+import com.pandaism.serializer.controller.units.fleetmind.Tablets;
 import org.apache.poi.util.IOUtils;
 
 import java.io.IOException;
@@ -35,11 +37,23 @@ public class URLConnectionThread<T> implements Runnable {
             if (this.unit instanceof DVR) {
                 DVR unit = (DVR) this.unit;
                 unit.setMonitorBytes(openConnection(unit.getMonitor(), 219));
-                unit.setCpuBytes(openConnection(unit.getCpu_serial(), 206));
                 unit.setSimBytes(openConnection(unit.getSim(), 310));
                 if (!unit.getRfid().isEmpty()) {
                     unit.setRfidBytes(openConnection(unit.getRfid(), 167));
                 }
+            }
+
+            if (this.unit instanceof Tablets) {
+                Tablets unit = (Tablets) this.unit;
+                unit.setSimBytes(openConnection(unit.getSim(), 310));
+                if (!unit.getDocking_station().isEmpty()) {
+                    unit.setDocking_stationBytes(openConnection(unit.getDocking_station(), 206));
+                }
+            }
+
+            if(this.unit instanceof Singular) {
+                Singular unit = (Singular) this.unit;
+                unit.setCpuBytes(openConnection(unit.getCpu_serial(), 206));
             }
         } catch (IOException e) {
             e.printStackTrace();
