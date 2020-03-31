@@ -8,6 +8,11 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+/**
+ * Used to manage the grabbing barcode data from external website
+ *
+ * @param <T> unit
+ */
 public class URLConnectionThread<T> implements Runnable {
     private T unit;
     private HttpURLConnection connection;

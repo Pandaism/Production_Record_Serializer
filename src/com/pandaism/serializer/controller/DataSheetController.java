@@ -10,10 +10,6 @@ public class DataSheetController<T> {
     public Label status_left;
     public Label status_right;
 
-    public void initialize() {
-
-    }
-
     public TableView<T> getData_table() {
         return data_table;
     }

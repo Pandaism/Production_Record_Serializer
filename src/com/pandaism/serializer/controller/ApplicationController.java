@@ -1,9 +1,9 @@
 package com.pandaism.serializer.controller;
 
+import com.pandaism.serializer.Main;
 import com.pandaism.serializer.controller.units.fleetmind.DVR;
 import com.pandaism.serializer.fxml.SystemTab;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,14 +15,17 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class ApplicationController {
     public TabPane data_sheet_tab_pane;
     public Menu edit_menu;
 
-    public void create_new(ActionEvent actionEvent) throws IOException {
+    /**
+     * Handles creating frame for new orders
+     *
+     * @throws IOException
+     */
+    public void create_new() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/create_new_system.fxml"));
         Parent root = loader.load();
         Stage createNewStage = new Stage();
@@ -48,15 +51,31 @@ public class ApplicationController {
 
     }
 
-    public void export(ActionEvent actionEvent) throws IOException {
-        export(((SystemTab) this.data_sheet_tab_pane.getSelectionModel().getSelectedItem()));
+    /**
+     * Handles exporting file through menu item
+     *
+     * @throws IOException
+     */
+    public void export() throws IOException {
+        if(Main.exportable) {
+            export(((SystemTab) this.data_sheet_tab_pane.getSelectionModel().getSelectedItem()));
+        } else {
+            new Alert(Alert.AlertType.ERROR, "Awaiting thread processing...", ButtonType.OK);
+        }
     }
 
     public void export_all(ActionEvent actionEvent) {
 
     }
 
+    /**
+     * Handles file and folder creation
+     *
+     * @param tab the targeted tab
+     * @throws IOException
+     */
     private void export(SystemTab tab) throws IOException {
+        // TODO: Change to use parent folder and mkdirs
         if(tab != null) {
             String company = tab.getTitle().substring(1, tab.getTitle().indexOf(']'));
             String customer = tab.getTitle().substring(tab.getTitle().indexOf(']') + 2);
@@ -95,6 +114,13 @@ public class ApplicationController {
 
     }
 
+    /**
+     * Handles Creation and header for excel workbook
+     *
+     * @param tab the targeted tab
+     * @param xlsxFile the excel file to export to
+     * @throws IOException
+     */
     private void createExcel(SystemTab tab, File xlsxFile) throws IOException {
         Workbook workbook = new XSSFWorkbook();
 
@@ -114,13 +140,13 @@ public class ApplicationController {
         data(tab, datasheet, xlsxFile);
     }
 
-    /*
-    TODO {
-     Require Major fixing:
-     move byte generation to when unit is appended to table
-     this section is only for data exportation
-     }
-
+    /**
+     * Handles appending data for all system branches
+     *
+     * @param tab the targeted tab
+     * @param datasheet the excel sheet being worked on
+     * @param xlsxFile the excel file to export to
+     * @throws IOException
      */
     private void data(SystemTab tab, Sheet datasheet, File xlsxFile) throws IOException {
         TableView data_table = tab.getData_table();
@@ -198,6 +224,14 @@ public class ApplicationController {
 
     }
 
+    /**
+     * Handles appending barcode pictures to sheet
+     *
+     * @param datasheet the excel sheet being worked on
+     * @param bytes barcode information in bytes
+     * @param c1 top right anchor cell
+     * @param barcodeRow row for barcode to be appended to
+     */
     private void getBarcode(Sheet datasheet, byte[] bytes, int c1, Row barcodeRow) {
         int monitorIdx = datasheet.getWorkbook().addPicture(bytes, Workbook.PICTURE_TYPE_PNG);
         CreationHelper helper = datasheet.getWorkbook().getCreationHelper();

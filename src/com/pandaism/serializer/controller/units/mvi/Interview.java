@@ -1,14 +1,20 @@
 package com.pandaism.serializer.controller.units.mvi;
 
 import com.pandaism.serializer.controller.units.Singular;
+import com.pandaism.serializer.thread.URLConnectionThread;
 import javafx.beans.property.SimpleStringProperty;
 
+/**
+ * Represent a MVI Flashback Interview Room Unit
+ */
 public class Interview extends Singular {
     public SimpleStringProperty id;
     public SimpleStringProperty door_rev;
     public SimpleStringProperty software_rev;
     public SimpleStringProperty supplier_sn;
     public SimpleStringProperty sd_card;
+
+    public byte[] sd_cardBytes;
 
     public Interview(SimpleStringProperty cpu_serial, SimpleStringProperty id, SimpleStringProperty door_rev, SimpleStringProperty software_rev, SimpleStringProperty supplier_sn, SimpleStringProperty sd_card) {
         super(cpu_serial);
@@ -17,6 +23,17 @@ public class Interview extends Singular {
         this.software_rev = software_rev;
         this.supplier_sn = supplier_sn;
         this.sd_card = sd_card;
+
+        super.service.execute(new URLConnectionThread<>(this));
+        super.service.shutdown();
+    }
+
+    public byte[] getSd_cardBytes() {
+        return sd_cardBytes;
+    }
+
+    public void setSd_cardBytes(byte[] sd_cardBytes) {
+        this.sd_cardBytes = sd_cardBytes;
     }
 
     public String getId() {

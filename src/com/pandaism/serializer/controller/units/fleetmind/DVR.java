@@ -4,6 +4,9 @@ import com.pandaism.serializer.controller.units.Singular;
 import com.pandaism.serializer.thread.URLConnectionThread;
 import javafx.beans.property.SimpleStringProperty;
 
+/**
+ * Represents a Fleetmind DVR
+ */
 public class DVR extends Singular {
     public SimpleStringProperty monitor;
     public SimpleStringProperty imei;
@@ -24,7 +27,6 @@ public class DVR extends Singular {
         this.relay = relay;
 
         super.service.execute(new URLConnectionThread<>(this));
-
         super.service.shutdown();
     }
 

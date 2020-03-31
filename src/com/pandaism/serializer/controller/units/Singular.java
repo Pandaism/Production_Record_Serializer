@@ -6,6 +6,10 @@ import javafx.beans.property.SimpleStringProperty;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Represent a dynamic single unit including spare orders
+ */
+
 public class Singular {
     public SimpleStringProperty cpu_serial;
     protected ExecutorService service;

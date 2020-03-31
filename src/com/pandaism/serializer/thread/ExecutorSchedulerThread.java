@@ -1,10 +1,25 @@
 package com.pandaism.serializer.thread;
 
-import javafx.concurrent.Task;
+import com.pandaism.serializer.Main;
 
-public class ExecutorSchedulerThread extends Task<Boolean> {
+import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
+
+/**
+ * Used to manage the status of all URLConnection executors
+ */
+public class ExecutorSchedulerThread implements Runnable {
+    private boolean running;
+
+    public ExecutorSchedulerThread() {
+        this.running = true;
+    }
+
     @Override
-    protected Boolean call() throws Exception {
-        return null;
+    public void run() {
+        while (this.running) {
+            Main.exportable = Main.EXECUTORS.stream().allMatch(ExecutorService::isTerminated);
+            Main.EXECUTORS = Main.EXECUTORS.stream().filter(executorService -> !executorService.isTerminated()).collect(Collectors.toList());
+        }
     }
 }

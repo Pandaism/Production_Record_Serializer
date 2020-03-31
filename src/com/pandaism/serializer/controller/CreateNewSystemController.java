@@ -17,7 +17,6 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 public class CreateNewSystemController {
@@ -81,8 +80,6 @@ public class CreateNewSystemController {
     private Stage mainStage;
     private TabPane dataSheetPane;
     private Menu edit_menu;
-
-    private HashMap<String, SystemTab> tab = new HashMap<>();
 
     public void initialize() {
         this.fleetmind_unit_dropdown.getItems().addAll(this.fleetmindSystems);
@@ -157,10 +154,6 @@ public class CreateNewSystemController {
                 break;
         }
 
-        if (systemTab != null) {
-            this.tab.put(systemTab.getSaleOrder(), systemTab);
-        }
-
         return systemTab;
     }
 
@@ -213,7 +206,4 @@ public class CreateNewSystemController {
         this.edit_menu = edit_menu;
     }
 
-    public HashMap<String, SystemTab> getTab() {
-        return tab;
-    }
 }

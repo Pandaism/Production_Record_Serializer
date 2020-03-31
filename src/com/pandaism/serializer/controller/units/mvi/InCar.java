@@ -1,8 +1,12 @@
 package com.pandaism.serializer.controller.units.mvi;
 
 import com.pandaism.serializer.controller.units.Singular;
+import com.pandaism.serializer.thread.URLConnectionThread;
 import javafx.beans.property.SimpleStringProperty;
 
+/**
+ * Represent a MVI Flashback In-car Unit
+ */
 public class InCar extends Singular {
     public SimpleStringProperty id;
     public SimpleStringProperty door_rev;
@@ -10,6 +14,8 @@ public class InCar extends Singular {
     public SimpleStringProperty supplier_sn;
     public SimpleStringProperty sd_card;
     public SimpleStringProperty assigned_ip;
+
+    public byte[] sd_cardBytes;
 
     public InCar(SimpleStringProperty cpu_serial, SimpleStringProperty id, SimpleStringProperty door_rev, SimpleStringProperty software_rev, SimpleStringProperty supplier_sn, SimpleStringProperty sd_card, SimpleStringProperty assigned_ip) {
         super(cpu_serial);
@@ -20,6 +26,17 @@ public class InCar extends Singular {
         this.supplier_sn = supplier_sn;
         this.sd_card = sd_card;
         this.assigned_ip = assigned_ip;
+
+        super.service.execute(new URLConnectionThread<>(this));
+        super.service.shutdown();
+    }
+
+    public byte[] getSd_cardBytes() {
+        return sd_cardBytes;
+    }
+
+    public void setSd_cardBytes(byte[] sd_cardBytes) {
+        this.sd_cardBytes = sd_cardBytes;
     }
 
     public String getId() {
