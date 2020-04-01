@@ -3,6 +3,8 @@ package com.pandaism.serializer.thread;
 import com.pandaism.serializer.controller.units.Singular;
 import com.pandaism.serializer.controller.units.fleetmind.DVR;
 import com.pandaism.serializer.controller.units.fleetmind.Tablets;
+import com.pandaism.serializer.controller.units.mvi.InCar;
+import com.pandaism.serializer.controller.units.mvi.Interview;
 import org.apache.poi.util.IOUtils;
 
 import java.io.IOException;
@@ -50,6 +52,17 @@ public class URLConnectionThread<T> implements Runnable {
                     unit.setDocking_stationBytes(openConnection(unit.getDocking_station(), 206));
                 }
             }
+
+            if (this.unit instanceof InCar) {
+                InCar unit = (InCar) this.unit;
+                unit.setSd_cardBytes(openConnection(unit.getSd_card(), 310));
+            }
+
+            if (this.unit instanceof Interview) {
+                Interview unit = (Interview) this.unit;
+                unit.setSd_cardBytes(openConnection(unit.getSd_card(), 310));
+            }
+
 
             if(this.unit instanceof Singular) {
                 Singular unit = (Singular) this.unit;
