@@ -4,7 +4,11 @@ import com.pandaism.serializer.Main;
 import com.pandaism.serializer.controller.units.Singular;
 import com.pandaism.serializer.controller.units.fleetmind.DVR;
 import com.pandaism.serializer.controller.units.fleetmind.Tablets;
+import com.pandaism.serializer.controller.units.it.AP;
+import com.pandaism.serializer.controller.units.it.Server;
+import com.pandaism.serializer.controller.units.mvi.BWX;
 import com.pandaism.serializer.controller.units.mvi.InCar;
+import com.pandaism.serializer.controller.units.mvi.Interview;
 import com.pandaism.serializer.fxml.SystemTab;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -55,7 +59,7 @@ public class ApplicationController {
     }
 
     /**
-     * Handles exporting file through menu item
+     * Handles exporting tab through menu item
      *
      * @throws IOException
      */
@@ -67,8 +71,20 @@ public class ApplicationController {
         }
     }
 
-    public void export_all(ActionEvent actionEvent) {
-
+    /**
+     * Handles exporting all tab through menu item
+     *
+     * @throws IOException
+     */
+    public void export_all() throws IOException {
+        if(Main.exportable) {
+            ObservableList<Tab> tabs = this.data_sheet_tab_pane.getTabs();
+            for(Tab tab : tabs) {
+                export((SystemTab) tab);
+            }
+        } else {
+            new Alert(Alert.AlertType.ERROR, "Awaiting thread processing...", ButtonType.OK);
+        }
     }
 
     /**
@@ -113,8 +129,33 @@ public class ApplicationController {
         }
     }
 
-    private void createCSV(SystemTab tab, File csvFile) {
+    private void createCSV(SystemTab tab, File csvFile) throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter(csvFile));
+        ObservableList items = tab.getData_table().getItems();
 
+        switch (tab.getUnit()) {
+            case "DVR":
+                break;
+            case "M1":
+            case "G1":
+                break;
+            case "SSV9":
+            case "Fleetmind Cameras":
+            case "Fleetmind Custom":
+            case "MVI Custom":
+            case "IT Custom":
+                break;
+            case "Flashback In-Car":
+                break;
+            case "Flashback Interview Room":
+                break;
+            case "BWX-100":
+                break;
+            case "Server":
+                break;
+            case "AP-AC-OUT":
+                break;
+        }
     }
 
     /**
@@ -241,22 +282,92 @@ public class ApplicationController {
                     serialRow.createCell(2).setCellValue(inCar.getCpu_serial());
                     getBarcode(datasheet, inCar.getCpuBytes(), 2, barcodeRow);
                     serialRow.createCell(3).setCellValue(inCar.getDoor_rev());
+                    serialRow.createCell(4).setCellValue(inCar.getSoftware_rev());
+                    serialRow.createCell(5).setCellValue(inCar.getSupplier_sn());
+                    serialRow.createCell(6).setCellValue(inCar.getSd_card());
+                    getBarcode(datasheet, inCar.getSd_cardBytes(), 6, barcodeRow);
+                    serialRow.createCell(7).setCellValue(inCar.getAssigned_ip());
+
+                }
+
+                datasheet.setColumnWidth(2, 256 * 30);
+                datasheet.setColumnWidth(5, 256 * 30);
+                datasheet.setColumnWidth(7, 256 * 14);
+                break;
+            case "Flashback Interview Room":
+                for (int item = 0; item < items.size(); item++) {
+                    Interview interview = (Interview) items.get(item);
+
+                    Row serialRow = datasheet.createRow(1 + (item * 2));
+                    Row barcodeRow = datasheet.createRow(serialRow.getRowNum() + 1);
+                    barcodeRow.setHeight((short) 600);
+                    serialRow.createCell(0).setCellValue(item + 1);
+
+                    serialRow.createCell(2).setCellValue(interview.getCpu_serial());
+                    getBarcode(datasheet, interview.getCpuBytes(), 2, barcodeRow);
+                    serialRow.createCell(3).setCellValue(interview.getDoor_rev());
+                    serialRow.createCell(4).setCellValue(interview.getSoftware_rev());
+                    serialRow.createCell(5).setCellValue(interview.getSupplier_sn());
+                    serialRow.createCell(6).setCellValue(interview.getSd_card());
+                    getBarcode(datasheet, interview.getSd_cardBytes(), 6, barcodeRow);
+
+                }
+
+                datasheet.setColumnWidth(2, 256 * 30);
+                datasheet.setColumnWidth(5, 256 * 30);
+                break;
+            case "BWX-100":
+                for (int item = 0; item < items.size(); item++) {
+                    BWX bwx = (BWX) items.get(item);
+
+                    Row serialRow = datasheet.createRow(1 + (item * 2));
+                    Row barcodeRow = datasheet.createRow(serialRow.getRowNum() + 1);
+                    barcodeRow.setHeight((short) 600);
+                    serialRow.createCell(0).setCellValue(item + 1);
+
+                    serialRow.createCell(2).setCellValue(bwx.getCpu_serial());
+                    getBarcode(datasheet, bwx.getCpuBytes(), 2, barcodeRow);
+                    serialRow.createCell(3).setCellValue(bwx.getDocking_station());
+                    getBarcode(datasheet, bwx.getDocking_stationBytes(), 3, barcodeRow);
+
+                }
+
+                datasheet.setColumnWidth(2, 256 * 30);
+                datasheet.setColumnWidth(3, 256 * 30);
+                break;
+            case "Server":
+                for (int item = 0; item < items.size(); item++) {
+                    Server server = (Server) items.get(item);
+
+                    Row serialRow = datasheet.createRow(1 + (item * 2));
+                    Row barcodeRow = datasheet.createRow(serialRow.getRowNum() + 1);
+                    barcodeRow.setHeight((short) 600);
+                    serialRow.createCell(0).setCellValue(item + 1);
+
+                    serialRow.createCell(2).setCellValue(server.getCpu_serial());
+                    getBarcode(datasheet, server.getCpuBytes(), 2, barcodeRow);
 
                 }
 
                 datasheet.setColumnWidth(2, 256 * 30);
                 break;
-            case "Flashback Interview Room":
-                System.out.println("Flashback Interview Room");
-                break;
-            case "BWX-100":
-                System.out.println("BWX-100");
-                break;
-            case "Server":
-                System.out.println("Server");
-                break;
             case "AP-AC-OUT":
-                System.out.println("AP-AC-OUT");
+                for (int item = 0; item < items.size(); item++) {
+                    AP ap = (AP) items.get(item);
+
+                    Row serialRow = datasheet.createRow(1 + (item * 2));
+                    Row barcodeRow = datasheet.createRow(serialRow.getRowNum() + 1);
+                    barcodeRow.setHeight((short) 600);
+                    serialRow.createCell(0).setCellValue(item + 1);
+
+                    serialRow.createCell(2).setCellValue(ap.getCpu_serial());
+                    getBarcode(datasheet, ap.getCpuBytes(), 2, barcodeRow);
+                    serialRow.createCell(3).setCellValue(ap.getAntenna_serial());
+                    getBarcode(datasheet, ap.getAntenna_serialBytes(), 3, barcodeRow);
+                }
+
+                datasheet.setColumnWidth(2, 256 * 30);
+                datasheet.setColumnWidth(3, 256 * 30);
                 break;
         }
 

@@ -3,6 +3,11 @@ package com.pandaism.serializer.thread;
 import com.pandaism.serializer.controller.units.Singular;
 import com.pandaism.serializer.controller.units.fleetmind.DVR;
 import com.pandaism.serializer.controller.units.fleetmind.Tablets;
+import com.pandaism.serializer.controller.units.it.AP;
+import com.pandaism.serializer.controller.units.it.Server;
+import com.pandaism.serializer.controller.units.mvi.BWX;
+import com.pandaism.serializer.controller.units.mvi.InCar;
+import com.pandaism.serializer.controller.units.mvi.Interview;
 import org.apache.poi.util.IOUtils;
 
 import java.io.IOException;
@@ -49,6 +54,26 @@ public class URLConnectionThread<T> implements Runnable {
                 if (!unit.getDocking_station().isEmpty()) {
                     unit.setDocking_stationBytes(openConnection(unit.getDocking_station(), 206));
                 }
+            }
+
+            if (this.unit instanceof InCar) {
+                InCar unit = (InCar) this.unit;
+                unit.setSd_cardBytes(openConnection(unit.getSd_card(), 310));
+            }
+
+            if (this.unit instanceof Interview) {
+                Interview unit = (Interview) this.unit;
+                unit.setSd_cardBytes(openConnection(unit.getSd_card(), 310));
+            }
+
+            if (this.unit instanceof BWX) {
+                BWX unit = (BWX) this.unit;
+                unit.setDocking_stationBytes(openConnection(unit.getDocking_station(), 310));
+            }
+
+            if (this.unit instanceof AP) {
+                AP unit = (AP) this.unit;
+                unit.setAntenna_serialBytes(openConnection(unit.getAntenna_serial(), 310));
             }
 
             if(this.unit instanceof Singular) {
