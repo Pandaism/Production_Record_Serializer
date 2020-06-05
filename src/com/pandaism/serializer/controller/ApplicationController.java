@@ -11,17 +11,19 @@ import com.pandaism.serializer.controller.units.mvi.InCar;
 import com.pandaism.serializer.controller.units.mvi.Interview;
 import com.pandaism.serializer.fxml.SystemTab;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ApplicationController {
     public TabPane data_sheet_tab_pane;
@@ -46,16 +48,54 @@ public class ApplicationController {
         createNewStage.show();
     }
 
-    public void open(ActionEvent actionEvent) {
+    public void _import() {
+        FileChooser fileChooser = new FileChooser();
+        File recordsFolder = new File("./records/");
+        if(recordsFolder.exists()) fileChooser.setInitialDirectory(recordsFolder);
 
+        Map<File, String> errorFiles = new HashMap<>();
+
+        fileChooser.showOpenMultipleDialog(null).forEach(file -> {
+            if(file != null) {
+                String extension = file.getName().substring(file.getName().indexOf('.'));
+                if(extension.equals("xlsx")) {
+
+                } else if(extension.equals("csv")) {
+                    try {
+                        importCSV(file);
+                    } catch (IOException e) {
+                        errorFiles.put(file, e.getMessage());
+                    }
+                } else {
+                    errorFiles.put(file, "Invalid file type");
+                }
+            }
+        });
+
+        if(errorFiles.size() > 0) {
+            StringBuilder error = new StringBuilder("The following files cannot be imported:\n");
+
+            for(File file : errorFiles.keySet()) {
+                error.append(file.getPath()).append(" : ").append(errorFiles.get(file));
+            }
+
+            new Alert(Alert.AlertType.ERROR, error.toString(), ButtonType.CLOSE).show();
+        }
     }
 
-    public void open_saveas(ActionEvent actionEvent) {
+    private void importCSV(File file) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        String header = reader.readLine();
+        //SystemTab tab = new SystemTab()
 
+        String line;
+        while ((line = reader.readLine()) != null) {
+
+        }
     }
 
-    public void quit(ActionEvent actionEvent) {
-
+    public void quit() {
+        Main.close(this.data_sheet_tab_pane);
     }
 
     /**
@@ -94,33 +134,18 @@ public class ApplicationController {
      * @throws IOException
      */
     private void export(SystemTab tab) throws IOException {
-        // TODO: Change to use parent folder and mkdirs
         if(tab != null) {
             String company = tab.getTitle().substring(1, tab.getTitle().indexOf(']'));
             String customer = tab.getTitle().substring(tab.getTitle().indexOf(']') + 2);
 
-            File companyFolder = new File("./records/" + company + "/");
-            File customerFolder = new File("./records/" + company + "/" + customer + "/");
-            File unitFolder = new File("./records/" + company + "/" + customer + "/" + tab.getUnit() + "/");
-
             File xlsxFile = new File("./records/" + company + "/" + customer + "/" + tab.getUnit() + "/SO" + tab.getSaleOrder() + ".xlsx");
             File csvFile = new File("./records/" + company + "/" + customer + "/" + tab.getUnit() + "/SO" + tab.getSaleOrder() + ".csv");
 
-            if (!companyFolder.exists()) {
-                if (companyFolder.mkdirs()) {
-                    new Alert(Alert.AlertType.INFORMATION, "Company Folder: " + company + " created...", ButtonType.OK).show();
-                }
-            }
-
-            if (!customerFolder.exists()) {
-                if (customerFolder.mkdirs()) {
-                    new Alert(Alert.AlertType.INFORMATION, "Customer Folder: " + customer + " created...", ButtonType.OK).show();
-                }
-            }
-
-            if (!unitFolder.exists()) {
-                if (unitFolder.mkdirs()) {
-                    new Alert(Alert.AlertType.INFORMATION, "Unit Folder: " + tab.getUnit() + " created...", ButtonType.OK).show();
+            if(!xlsxFile.getParentFile().exists() || !csvFile.getParentFile().exists()) {
+                if(xlsxFile.getParentFile().mkdirs()) {
+                    new Alert(Alert.AlertType.INFORMATION, "Parent Folder: " + xlsxFile.getParentFile().getPath() + " created...", ButtonType.OK).show();
+                } else {
+                    new Alert(Alert.AlertType.INFORMATION, "Attempt to make parent Folder: " + xlsxFile.getParentFile().getPath() + " failed...", ButtonType.OK).show();
                 }
             }
 
@@ -129,33 +154,93 @@ public class ApplicationController {
         }
     }
 
+    /**
+     * Handles Creation for csv record file
+     *
+     * @param tab the targeted tab
+     * @param csvFile the csv file to export to
+     * @throws IOException
+     */
     private void createCSV(SystemTab tab, File csvFile) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(csvFile));
         ObservableList items = tab.getData_table().getItems();
 
         switch (tab.getUnit()) {
             case "DVR":
+                writer.write("Monitor Serial,CPU Serial,IMEI,SIM,RFID,Relay");
+                for (Object item : items) {
+                    writer.write(((DVR) item).getMonitor() + ",");
+                    writer.write(((DVR) item).getCpu_serial() + ",");
+                    writer.write(((DVR) item).getImei() + ",");
+                    writer.write(((DVR) item).getSim() + ",");
+                    writer.write(((DVR) item).getRfid() + ",");
+                    writer.write(((DVR) item).getRelay() + "\n");
+                }
                 break;
             case "M1":
             case "G1":
+                writer.write("Tablet Serial,IMEI,SIM,Docking Station");
+                for (Object item : items) {
+                    writer.write(((Tablets) item).getCpu_serial() + ",");
+                    writer.write(((Tablets) item).getImei() + ",");
+                    writer.write(((Tablets) item).getSim() + ",");
+                    writer.write(((Tablets) item).getDocking_station() + "\n");
+                }
                 break;
             case "SSV9":
             case "Fleetmind Cameras":
             case "Fleetmind Custom":
             case "MVI Custom":
             case "IT Custom":
+                writer.write("Serial Number");
+                for (Object item : items) {
+                    writer.write(((Singular) item).getCpu_serial() + "\n");
+                }
                 break;
             case "Flashback In-Car":
+                writer.write("FB Serial,Door Rev,Software Rev,Supplier SN,SD Card, Assigned IP");
+                for (Object item : items) {
+                    writer.write(((InCar) item).getCpu_serial() + ",");
+                    writer.write(((InCar) item).getDoor_rev() + ",");
+                    writer.write(((InCar) item).getSoftware_rev() + ",");
+                    writer.write(((InCar) item).getSupplier_sn() + "\n");
+                    writer.write(((InCar) item).getSd_card() + "\n");
+                    writer.write(((InCar) item).getAssigned_ip() + "\n");
+                }
                 break;
             case "Flashback Interview Room":
+                writer.write("FB Serial,Door Rev,Software Rev,Supplier SN,SD Card");
+                for (Object item : items) {
+                    writer.write(((Interview) item).getCpu_serial() + ",");
+                    writer.write(((Interview) item).getDoor_rev() + ",");
+                    writer.write(((Interview) item).getSoftware_rev() + ",");
+                    writer.write(((Interview) item).getSupplier_sn() + "\n");
+                    writer.write(((Interview) item).getSd_card() + "\n");
+                }
                 break;
             case "BWX-100":
+                writer.write("BWX Serial, Docking Station");
+                for (Object item : items) {
+                    writer.write(((BWX) item).getCpu_serial() + "\n");
+                    writer.write(((BWX) item).getDocking_station() + "\n");
+                }
                 break;
             case "Server":
+                writer.write("Server SN");
+                for (Object item : items) {
+                    writer.write(((Singular) item).getCpu_serial() + "\n");
+                }
                 break;
             case "AP-AC-OUT":
+                writer.write("AP SN, Antenna SN");
+                for (Object item : items) {
+                    writer.write(((AP) item).getCpu_serial() + "\n");
+                    writer.write(((AP) item).getAntenna_serial() + "\n");
+                }
                 break;
         }
+
+        writer.close();
     }
 
     /**
@@ -395,17 +480,23 @@ public class ApplicationController {
      * @param barcodeRow row for barcode to be appended to
      */
     private void getBarcode(Sheet datasheet, byte[] bytes, int c1, Row barcodeRow) {
-        int monitorIdx = datasheet.getWorkbook().addPicture(bytes, Workbook.PICTURE_TYPE_PNG);
-        CreationHelper helper = datasheet.getWorkbook().getCreationHelper();
-        Drawing drawing = datasheet.createDrawingPatriarch();
-        ClientAnchor anchor = helper.createClientAnchor();
+        if(bytes != null) {
+            int monitorIdx = datasheet.getWorkbook().addPicture(bytes, Workbook.PICTURE_TYPE_PNG);
+            CreationHelper helper = datasheet.getWorkbook().getCreationHelper();
+            Drawing drawing = datasheet.createDrawingPatriarch();
+            ClientAnchor anchor = helper.createClientAnchor();
 
-        anchor.setCol1(c1);
-        anchor.setRow1(barcodeRow.getRowNum());
-        anchor.setCol2(c1 + 1);
-        anchor.setRow2(barcodeRow.getRowNum() + 1);
+            anchor.setCol1(c1);
+            anchor.setRow1(barcodeRow.getRowNum());
+            anchor.setCol2(c1 + 1);
+            anchor.setRow2(barcodeRow.getRowNum() + 1);
 
-        Picture picture = drawing.createPicture(anchor, monitorIdx);
-        barcodeRow.createCell(2);
+            Picture picture = drawing.createPicture(anchor, monitorIdx);
+            barcodeRow.createCell(2);
+        }
+    }
+
+    public TabPane getData_sheet_tab_pane() {
+        return data_sheet_tab_pane;
     }
 }
