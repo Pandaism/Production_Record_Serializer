@@ -10,6 +10,7 @@ import com.pandaism.serializer.controller.units.mvi.BWX;
 import com.pandaism.serializer.controller.units.mvi.InCar;
 import com.pandaism.serializer.controller.units.mvi.Interview;
 import com.pandaism.serializer.fxml.SystemTab;
+import com.pandaism.serializer.util.TabLoader;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -22,8 +23,13 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ApplicationController {
     public TabPane data_sheet_tab_pane;
@@ -55,42 +61,62 @@ public class ApplicationController {
 
         Map<File, String> errorFiles = new HashMap<>();
 
-        fileChooser.showOpenMultipleDialog(null).forEach(file -> {
-            if(file != null) {
-                String extension = file.getName().substring(file.getName().indexOf('.'));
-                if(extension.equals("xlsx")) {
+        List<File> files = fileChooser.showOpenMultipleDialog(null);
+        if(files != null) {
+            files.forEach(file -> {
+                if(file != null) {
+                    String extension = file.getName().substring(file.getName().indexOf('.') + 1);
+                    if(extension.equals("xlsx")) {
 
-                } else if(extension.equals("csv")) {
-                    try {
-                        importCSV(file);
-                    } catch (IOException e) {
-                        errorFiles.put(file, e.getMessage());
+                    } else if(extension.equals("csv")) {
+                        try {
+                            importCSV(file);
+                        } catch (IOException e) {
+                            errorFiles.put(file, e.getMessage());
+                        }
+                    } else {
+                        errorFiles.put(file, "Invalid file type");
                     }
-                } else {
-                    errorFiles.put(file, "Invalid file type");
                 }
+            });
+
+            if(errorFiles.size() > 0) {
+                StringBuilder error = new StringBuilder("The following files cannot be imported:\n");
+
+                for(File file : errorFiles.keySet()) {
+                    error.append(file.getPath()).append(" : ").append(errorFiles.get(file));
+                }
+
+                new Alert(Alert.AlertType.ERROR, error.toString(), ButtonType.CLOSE).show();
             }
-        });
-
-        if(errorFiles.size() > 0) {
-            StringBuilder error = new StringBuilder("The following files cannot be imported:\n");
-
-            for(File file : errorFiles.keySet()) {
-                error.append(file.getPath()).append(" : ").append(errorFiles.get(file));
-            }
-
-            new Alert(Alert.AlertType.ERROR, error.toString(), ButtonType.CLOSE).show();
         }
     }
 
     private void importCSV(File file) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(file));
-        String header = reader.readLine();
-        //SystemTab tab = new SystemTab()
+        List<String> data;
 
-        String line;
-        while ((line = reader.readLine()) != null) {
+        try(Stream<String> lines = Files.lines(file.toPath())) {
+            data = lines.collect(Collectors.toList());
+            String[] path = file.getPath().split(Pattern.quote(System.getProperty("file.separator")));
 
+            String salesOrder = path[path.length - 1].substring(0, path[path.length - 1].indexOf("."));
+            String company = path[path.length - 5];
+            String customer = path[path.length - 4];
+            String unit = path[path.length - 3];
+
+            TabLoader tabLoader = new TabLoader();
+
+            switch (company) {
+                case "Fleetmind":
+                case "MVI":
+                case "IT Production":
+                    this.data_sheet_tab_pane.getTabs().add(tabLoader.createDataTab(salesOrder, "[" + company + "] " + customer, unit));
+                    break;
+                case "Spare Production":
+                    this.data_sheet_tab_pane.getTabs().add(tabLoader.createDataTab(salesOrder, "[" + company + "] " + customer));
+                    break;
+            }
         }
     }
 
@@ -138,8 +164,8 @@ public class ApplicationController {
             String company = tab.getTitle().substring(1, tab.getTitle().indexOf(']'));
             String customer = tab.getTitle().substring(tab.getTitle().indexOf(']') + 2);
 
-            File xlsxFile = new File("./records/" + company + "/" + customer + "/" + tab.getUnit() + "/SO" + tab.getSaleOrder() + ".xlsx");
-            File csvFile = new File("./records/" + company + "/" + customer + "/" + tab.getUnit() + "/SO" + tab.getSaleOrder() + ".csv");
+            File xlsxFile = new File("./records/" + company + "/" + customer + "/" + tab.getUnit() + "/SO" + tab.getSaleOrder() + "/" + tab.getSaleOrder() + ".xlsx");
+            File csvFile = new File("./records/" + company + "/" + customer + "/" + tab.getUnit() + "/SO" + tab.getSaleOrder() + "/" + tab.getSaleOrder() + ".csv");
 
             if(!xlsxFile.getParentFile().exists() || !csvFile.getParentFile().exists()) {
                 if(xlsxFile.getParentFile().mkdirs()) {

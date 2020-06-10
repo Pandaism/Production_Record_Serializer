@@ -27,9 +27,9 @@ public class SystemTab<T> extends Tab {
     private String saleOrder;
     private TableView<T> data_table;
 
-    public SystemTab(String title, Object unit, String saleOrder, List<TableColumn<T, String>> columns, AnchorPane anchorPane, InputPanes inputPanes) throws IOException {
-        super("SO#" + saleOrder + " " + title);
-        this.title = title;
+    public SystemTab(String company, Object unit, String saleOrder, List<TableColumn<T, String>> columns, AnchorPane anchorPane, InputPanes inputPanes) throws IOException {
+        super("SO#" + saleOrder + " " + company);
+        this.title = company;
         this.unit = unit.toString();
         this.saleOrder = saleOrder;
 
