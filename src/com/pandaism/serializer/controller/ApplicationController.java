@@ -11,6 +11,7 @@ import com.pandaism.serializer.controller.units.mvi.InCar;
 import com.pandaism.serializer.controller.units.mvi.Interview;
 import com.pandaism.serializer.fxml.SystemTab;
 import com.pandaism.serializer.util.TabLoader;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -94,10 +95,11 @@ public class ApplicationController {
 
     private void importCSV(File file) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(file));
-        List<String> data;
+        List<String> datas;
 
         try(Stream<String> lines = Files.lines(file.toPath())) {
-            data = lines.collect(Collectors.toList());
+            datas = lines.collect(Collectors.toList());
+            datas.remove(0);
             String[] path = file.getPath().split(Pattern.quote(System.getProperty("file.separator")));
 
             String salesOrder = path[path.length - 1].substring(0, path[path.length - 1].indexOf("."));
@@ -108,10 +110,35 @@ public class ApplicationController {
             TabLoader tabLoader = new TabLoader();
 
             switch (company) {
-                case "Fleetmind":
-                case "MVI":
                 case "IT Production":
                     this.data_sheet_tab_pane.getTabs().add(tabLoader.createDataTab(salesOrder, "[" + company + "] " + customer, unit));
+                    break;
+                case "MVI":
+                    this.data_sheet_tab_pane.getTabs().add(tabLoader.createDataTab(salesOrder, "[" + company + "] " + customer, unit));
+                    break;
+                case "Fleetmind":
+                    SystemTab fleetTab = tabLoader.createDataTab(salesOrder, "[" + company + "] " + customer, unit);
+                    this.data_sheet_tab_pane.getTabs().add(fleetTab);
+
+                    for(String data : datas) {
+                        String[] line = data.split(",");
+                        switch (unit) {
+                            case "DVR":
+                                fleetTab.getData_table().getItems().add(new DVR(new SimpleStringProperty(line[1]), new SimpleStringProperty(line[0]), new SimpleStringProperty(line[2]), new SimpleStringProperty(line[3]), new SimpleStringProperty(line[4]), new SimpleStringProperty(line[5])));
+                                break;
+                            case "M1":
+                                fleetTab.getData_table().getItems().add(new Tablets(new SimpleStringProperty(line[0]), new SimpleStringProperty(line[1]), new SimpleStringProperty(line[2]), new SimpleStringProperty(line[3])));
+                                break;
+                            case "G1":
+                                break;
+                            case "SSV9":
+                                break;
+                            case "Fleetmind Cameras":
+                                break;
+                            case "Fleetmind Custom":
+                                break;
+                        }
+                    }
                     break;
                 case "Spare Production":
                     this.data_sheet_tab_pane.getTabs().add(tabLoader.createDataTab(salesOrder, "[" + company + "] " + customer));
@@ -193,7 +220,7 @@ public class ApplicationController {
 
         switch (tab.getUnit()) {
             case "DVR":
-                writer.write("Monitor Serial,CPU Serial,IMEI,SIM,RFID,Relay");
+                writer.write("Monitor Serial,CPU Serial,IMEI,SIM,RFID,Relay\n");
                 for (Object item : items) {
                     writer.write(((DVR) item).getMonitor() + ",");
                     writer.write(((DVR) item).getCpu_serial() + ",");
@@ -205,7 +232,7 @@ public class ApplicationController {
                 break;
             case "M1":
             case "G1":
-                writer.write("Tablet Serial,IMEI,SIM,Docking Station");
+                writer.write("Tablet Serial,IMEI,SIM,Docking Station\n");
                 for (Object item : items) {
                     writer.write(((Tablets) item).getCpu_serial() + ",");
                     writer.write(((Tablets) item).getImei() + ",");
@@ -218,13 +245,13 @@ public class ApplicationController {
             case "Fleetmind Custom":
             case "MVI Custom":
             case "IT Custom":
-                writer.write("Serial Number");
+                writer.write("Serial Number\n");
                 for (Object item : items) {
                     writer.write(((Singular) item).getCpu_serial() + "\n");
                 }
                 break;
             case "Flashback In-Car":
-                writer.write("FB Serial,Door Rev,Software Rev,Supplier SN,SD Card, Assigned IP");
+                writer.write("FB Serial,Door Rev,Software Rev,Supplier SN,SD Card, Assigned IP\n");
                 for (Object item : items) {
                     writer.write(((InCar) item).getCpu_serial() + ",");
                     writer.write(((InCar) item).getDoor_rev() + ",");
@@ -235,7 +262,7 @@ public class ApplicationController {
                 }
                 break;
             case "Flashback Interview Room":
-                writer.write("FB Serial,Door Rev,Software Rev,Supplier SN,SD Card");
+                writer.write("FB Serial,Door Rev,Software Rev,Supplier SN,SD Card\n");
                 for (Object item : items) {
                     writer.write(((Interview) item).getCpu_serial() + ",");
                     writer.write(((Interview) item).getDoor_rev() + ",");
@@ -245,20 +272,20 @@ public class ApplicationController {
                 }
                 break;
             case "BWX-100":
-                writer.write("BWX Serial, Docking Station");
+                writer.write("BWX Serial, Docking Station\n");
                 for (Object item : items) {
                     writer.write(((BWX) item).getCpu_serial() + "\n");
                     writer.write(((BWX) item).getDocking_station() + "\n");
                 }
                 break;
             case "Server":
-                writer.write("Server SN");
+                writer.write("Server SN\n");
                 for (Object item : items) {
                     writer.write(((Singular) item).getCpu_serial() + "\n");
                 }
                 break;
             case "AP-AC-OUT":
-                writer.write("AP SN, Antenna SN");
+                writer.write("AP SN, Antenna SN\n");
                 for (Object item : items) {
                     writer.write(((AP) item).getCpu_serial() + "\n");
                     writer.write(((AP) item).getAntenna_serial() + "\n");

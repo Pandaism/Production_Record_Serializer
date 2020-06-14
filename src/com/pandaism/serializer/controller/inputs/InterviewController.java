@@ -1,6 +1,5 @@
 package com.pandaism.serializer.controller.inputs;
 
-import com.pandaism.serializer.controller.units.mvi.InCar;
 import com.pandaism.serializer.controller.units.mvi.Interview;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;

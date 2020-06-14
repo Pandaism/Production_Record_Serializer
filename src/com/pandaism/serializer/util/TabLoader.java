@@ -68,7 +68,7 @@ public class TabLoader {
         return column;
     }
 
-    public Tab createDataTab(String salesOrder, String company, Object unit) throws IOException {
+    public SystemTab createDataTab(String salesOrder, String company, Object unit) throws IOException {
         FXMLLoader loader;
         SystemTab systemTab = null;
 
